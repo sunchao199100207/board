@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>狼人杀法官助手</title>
+  <link rel="stylesheet" href="css/lrs.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="welcome-phase active" id="welcomePhase">
+    <div class="card">
+      <h1>🌙 狼人杀法官助手</h1>
+      <p style="margin: 15px 0;">专业法官工具，让游戏更流畅</p>
+      <div class="action-buttons"><button class="btn btn-primary" onclick="showSetupPhase()">开始创建游戏</button></div>
+      <p style="margin-top: 16px;"><a href="lrs-deal.html" style="color:#fff;">只发牌，流程仍由法官宣读</a></p>
+    </div>
+  </div>
+
+  <div class="setup-phase" id="setupPhase">
+    <div class="scrollable-content">
+      <div class="card">
+        <h3>游戏配置</h3>
+        <div class="role-config">
+          <div class="role-item"><span class="role-name">🧑‍🌾 平民</span><div class="role-controls"><button class="btn-control" onclick="adjustRole('civilian', -1)">-</button><span class="role-count" id="civilianCount">3</span><button class="btn-control" onclick="adjustRole('civilian', 1)">+</button></div></div>
+          <div class="role-item"><span class="role-name">🐺 狼人</span><div class="role-controls"><button class="btn-control" onclick="adjustRole('werewolf', -1)">-</button><span class="role-count" id="werewolfCount">2</span><button class="btn-control" onclick="adjustRole('werewolf', 1)">+</button></div></div>
+          <div class="role-item"><span class="role-name">👑 狼王</span><div class="role-controls"><div class="toggle-switch active" id="wolfKingToggle" onclick="toggleRole('wolfKing')"></div></div></div>
+          <div class="role-item"><span class="role-name">🔮 预言家</span><div class="role-controls"><div class="toggle-switch active" id="seerToggle" onclick="toggleRole('seer')"></div></div></div>
+          <div class="role-item"><span class="role-name">🧙‍♀️ 女巫</span><div class="role-controls"><div class="toggle-switch active" id="witchToggle" onclick="toggleRole('witch')"></div></div></div>
+          <div class="role-item"><span class="role-name">🏹 猎人</span><div class="role-controls"><div class="toggle-switch active" id="hunterToggle" onclick="toggleRole('hunter')"></div></div></div>
+          <div class="role-item"><span class="role-name">🛡️ 守卫</span><div class="role-controls"><div class="toggle-switch active" id="guardToggle" onclick="toggleRole('guard')"></div></div></div>
+          <hr>
+          <div class="role-item"><span class="role-name">女巫首夜可自救</span><div class="role-controls"><div class="toggle-switch active" id="witchSelfSaveToggle" onclick="toggleWitchSelfSave()"></div></div></div>
+        </div>
+        <div style="text-align: center; margin-top: 15px;"><strong>总人数：<span id="totalCount">10</span>人</strong></div>
+        <div class="action-buttons"><button class="btn btn-primary" onclick="confirmSetup()">开始游戏</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-phase" id="gamePhase">
+    <div class="phase-indicator" id="phaseIndicator"></div>
+    <div class="scrollable-content">
+      <div id="nightActionContainer"><div class="card" id="actionCard" style="display: none;"><h3 id="actionCardTitle"></h3><div id="actionCardContent"></div></div></div>
+      <div class="card" id="dayPhase" style="display: none;">
+        <h3>☀️ 天亮了</h3>
+        <div id="identitySummaryContainer" style="display: none;"><h4>👥 场上身份</h4><div id="identitySummaryList"></div></div>
+        <div class="prompt-box" id="dayResult"></div>
+        <div class="action-buttons" id="dayActionButtons"><button class="btn btn-primary" onclick="showVotingPhase()">进入投票</button></div>
+      </div>
+      <div class="card" id="votingPhase" style="display: none;">
+        <h3>🗳️ 投票放逐</h3><div class="prompt-box">请选择被投票放逐的玩家。</div>
+        <div class="player-selector" id="voteSelector"></div>
+        <div class="action-buttons"><button class="btn btn-danger" onclick="confirmVote()">确认放逐</button></div>
+      </div>
+      <div class="card" id="skillPhase" style="display: none;">
+        <h3 id="skillTitle"></h3><div class="prompt-box" id="skillPrompt"></div>
+        <div class="player-selector" id="skillSelector"></div>
+        <div class="action-buttons" id="skillActionButtons"></div>
+      </div>
+      <div class="log-container"><h4>📜 游戏记录</h4><div id="gameLog"></div></div>
+    </div>
+    <div class="bottom-nav-buttons">
+      <button onclick="backToHome()">返回首页</button>
+      <button onclick="resetCurrentGame()">重置游戏</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal" class="modal-overlay">
+  <div class="modal-content">
+    <p id="modal-text"></p>
+    <div id="modal-buttons" class="action-buttons"></div>
+  </div>
+</div>
+
+<script src="js/lrs.js?v=<?= Date.now() ?>"></script>
+
+
+</body>
+</html>

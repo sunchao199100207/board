@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>阿瓦隆身份分配器</title>
+  <link rel="stylesheet" href="css/awl.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div id="form-container">
+    <div class="card"> <h1>阿瓦隆</h1>
+
+      <div id="error-message"></div>
+
+      <form id="identity-form">
+        <p>
+          <label for="players-number">总人数 (5-10):</label>
+          <input id="players-number" name="PlayersNumber" type="number" min="5" max="10" required>
+        </p>
+        <p>
+          <label for="seat-number">你的座位号 (1 ~ 总人数):</label>
+          <input id="seat-number" name="SeatNumber" type="number" min="1" max="10" required>
+        </p>
+        <p>
+          <label for="game-number">游戏数字:</label>
+          <input id="game-number" name="GameNumber" type="number" min="1" required>
+        </p>
+        <div class="action-buttons">
+          <button type="submit" class="btn btn-primary" id="submit-button">获取身份</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <div id="result-container" style="display: none;">
+    <div class="card"> <h2>你的身份是</h2>
+
+      <div class="card" id="identity-card">
+        <img id="identity-image" src="" alt="角色图片" />
+        <div id="identity-name"></div>
+      </div>
+
+      <div class="prompt-box" id="seen-info">
+        <div id="seen-title"></div>
+        <div id="seen-players"></div>
+        <div id="seen-subtitle"></div>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-secondary" id="back-button">返回</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/awl.js"></script>
+</body>
+</html>

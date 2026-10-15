@@ -1,0 +1,91 @@
+.guide {
+    margin-top: 14px;
+    text-align: left;
+}
+.guide-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+#guide-title { font-size: 18px; }
+#guide-progress { opacity: 0.75; font-size: 13px; }
+#guide-body p { margin: 0 0 10px; line-height: 1.6; font-size: 15px; }
+#guide-body strong { color: #ffe08a; }
+.dual-hand { margin: 8px 0 4px; }
+.dual-pick-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.dual-pick {
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    text-align: center;
+}
+.dual-pick.on { border-color: #ffd76a; }
+.dual-pick img, .fallback-face {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+}
+.fallback-face {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(160deg, #243056, #12182c);
+}
+.dual-label { margin-top: 6px; font-size: 13px; opacity: 0.8; }
+.dual-name { font-size: 16px; font-weight: 700; }
+.dual-camp { text-align: center; margin: 10px 0 0; line-height: 1.5; }
+.dual-stack { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.dual-stack .upper { width: min(280px, 78vw); }
+.dual-stack .lower { width: min(180px, 48vw); opacity: 0.92; }
+.hand-only .room-chrome { display: none !important; }
+.hand-only #my-hand.covered img,
+.hand-only #my-hand.covered .fallback-face,
+.hand-only #my-hand.covered .dual-name { visibility: hidden; }
+.count-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.count-row button { flex: 1; }
+.pair-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+}
+.pair-row img, .pair-row .fallback-face {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.mini-face { font-size: 13px; }
+#deal-list.deal-list { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); }
+#deal-list .pair-row { gap: 3px; }
+#deal-list .pair-row img,
+#deal-list .pair-row .fallback-face {
+    width: 100%;
+    height: 44px;
+    aspect-ratio: 1;
+    border-radius: 8px;
+}
+#deal-list .dual-label {
+    color: #d5e4ff;
+    font-size: 11px;
+    line-height: 1.2;
+    margin-top: 2px;
+}
+#deal-list .portrait figcaption {
+    position: static;
+    background: none;
+    padding: 4px 0 0;
+    font-size: 11px;
+    line-height: 1.3;
+}

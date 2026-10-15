@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>阿瓦隆观战模式</title>
+    <link rel="stylesheet" href="css/awlfj.css?v=20250117">
+    <style>
+        body {
+            padding: 8px;
+        }
+        .container {
+            max-width: 100%;
+            height: calc(100vh - 16px);
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .card h1 {
+            margin-bottom: 12px;
+            font-size: 24px;
+        }
+        .spectator-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .spectator-input-row input {
+            flex: 1;
+        }
+        .spectator-input-row button {
+            flex: 0 0 auto;
+            min-width: 80px;
+        }
+        .spectator-status {
+            margin-bottom: 12px;
+            font-size: 0.85em;
+            color: rgba(255,255,255,0.75);
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            line-height: 1.4;
+        }
+        #spectator-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        .spectator-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        .spectator-list {
+            flex: 1;
+            background: rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 6px;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        .spectator-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            margin-bottom: 3px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+        .spectator-item:last-child {
+            margin-bottom: 0;
+        }
+        .spectator-item:hover {
+            transform: translateX(2px);
+        }
+        .spectator-item.good {
+            background: rgba(132, 250, 176, 0.12);
+            border-left: 4px solid rgba(132, 250, 176, 0.6);
+        }
+        .spectator-item.evil {
+            background: rgba(245, 87, 108, 0.12);
+            border-left: 4px solid rgba(245, 87, 108, 0.6);
+        }
+        .spectator-seat {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 24px;
+            text-align: center;
+            font-weight: 600;
+            margin-right: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        .spectator-identity {
+            flex: 1;
+            font-weight: 500;
+        }
+        .spectator-item.good .spectator-identity {
+            color: #84fab0;
+        }
+        .spectator-item.evil .spectator-identity {
+            color: #f5576c;
+        }
+        @media (max-width: 480px) {
+            body {
+                padding: 6px;
+            }
+            .container {
+                height: calc(100vh - 12px);
+            }
+            .card h1 {
+                font-size: 22px;
+                margin-bottom: 10px;
+            }
+            .spectator-item {
+                padding: 7px 8px;
+                font-size: 1em;
+            }
+            .spectator-seat {
+                min-width: 28px;
+                height: 22px;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>观战房间</h1>
+            <div class="spectator-input-row">
+                <input type="text" id="spectator-room-number" inputmode="numeric" placeholder="输入房间号">
+                <button id="btn-spectator-refresh" class="btn btn-primary">确认</button>
+            </div>
+            <div class="spectator-status" id="spectator-status">尚未加载房间数据</div>
+            <div id="spectator-content">
+                <div class="spectator-section">
+                    <div id="spectator-good-list" class="spectator-list"></div>
+                </div>
+                <div class="spectator-section">
+                    <div id="spectator-evil-list" class="spectator-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/awlfj.spectator.js?v=20250117"></script>
+</body>
+</html>
+

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>桌游</title>
+    <link rel="stylesheet" href="css/awlfj.css?v=20250117">
+    <style>
+        .pick-card h1 { margin-bottom: 6px; }
+        .pick-lead {
+            text-align: center;
+            opacity: 0.85;
+            margin-bottom: 18px;
+        }
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .game-link {
+            display: block;
+            padding: 20px 16px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+        .game-link strong {
+            display: block;
+            font-size: 22px;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .game-link span {
+            display: block;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .game-link.avalon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .game-link.wolf { background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 55%, #240b36 100%); }
+        .game-link.dual { background: linear-gradient(135deg, #b24545 0%, #6b2d5b 55%, #241424 100%); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card pick-card">
+        <h1>桌游</h1>
+        <p class="pick-lead">选一个，进房间。</p>
+        <div class="game-list">
+            <a class="game-link avalon" href="awlfj.html">
+                <strong>阿瓦隆</strong>
+                <span>好人完成任务，坏人从中作梗</span>
+            </a>
+            <a class="game-link wolf" href="lrs-deal.html">
+                <strong>狼人杀</strong>
+                <span>只发身份，流程由法官宣读</span>
+            </a>
+            <a class="game-link dual" href="dual-deal.html">
+                <strong>双身份狼人杀</strong>
+                <span>一人两张牌，先看引导再进房间</span>
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>阿瓦隆 - 多客户端测试</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            margin: 0;
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 20px;
+        }
+        .toolbar { 
+            display: flex; 
+            gap: 12px; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            margin-bottom: 12px;
+        }
+        .toolbar .field { 
+            display: flex; 
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+        }
+        .toolbar .field label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .toolbar input, .toolbar select {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+        .toolbar input:focus, .toolbar select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .toolbar input[type="text"] {
+            width: 100px;
+        }
+        .toolbar input[type="number"] {
+            width: 70px;
+        }
+        .toolbar select {
+            width: 100px;
+            cursor: pointer;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-left: auto;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        #btn-run {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        #btn-run:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        #btn-clear {
+            background: #f5f5f5;
+            color: #333;
+        }
+        #btn-clear:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        .tip { 
+            color: #888; 
+            font-size: 13px; 
+            margin-top: 16px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); 
+            gap: 24px;
+            justify-items: center;
+        }
+        .cell { 
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            background: #2c2c2c;
+            border-radius: 28px;
+            padding: 12px;
+            padding-bottom: 60px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+        }
+        .cell:hover {
+            transform: translateY(-4px);
+        }
+        .cell::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 3px;
+        }
+        .cell::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 3px;
+        }
+        iframe { 
+            width: 100%; 
+            height: 750px; 
+            border: none; 
+            background: white;
+            border-radius: 20px;
+            display: block;
+        }
+        .cell-label {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 10;
+            white-space: nowrap;
+        }
+        .cell-controls {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            pointer-events: auto;
+            width: calc(100% - 24px);
+            justify-content: center;
+        }
+        .test-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background: rgba(255, 87, 34, 0.9);
+            color: white;
+        }
+        .test-btn:hover {
+            background: rgba(255, 87, 34, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 87, 34, 0.5);
+        }
+        .test-btn:active {
+            transform: translateY(0);
+        }
+        .test-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-group {
+                margin-left: 0;
+                width: 100%;
+            }
+            button {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="toolbar">
+                <h1>🎮 阿瓦隆多客户端测试</h1>
+                <div class="field">
+                    <label>房间号</label>
+                    <input id="room" type="text" placeholder="8888" value="8888" inputmode="numeric">
+                </div>
+                <div class="field">
+                    <label>人数</label>
+                    <input id="total" type="number" min="5" max="12" value="5">
+                </div>
+                <div class="field">
+                    <label>客户端数</label>
+                    <input id="clients" type="number" min="5" max="12" value="5">
+                </div>
+                <div class="btn-group">
+                    <button id="btn-run">🚀 一键创建 + 加入 + 选座 + 准备</button>
+                    <button id="btn-ready-all">✅ 一键准备</button>
+                    <button id="btn-clear">🗑️ 清空窗口</button>
+                </div>
+            </div>
+            <div class="tip">
+                💡 说明：第1个为房主(创建房间)，其余自动加入；为避免抢座，每个客户端会带不同延迟与座号。
+            </div>
+        </div>
+
+        <div id="grid" class="grid"></div>
+    </div>
+
+    <script>
+        function buildUrl({index, room, total, count}){
+            var isHost = index === 0;
+            var seat = index + 1; // 从1开始
+            var delayMs = 200 + index * 300; // 依次错开
+            var params = new URLSearchParams();
+            params.set('nostorage','1'); // 使用内存存储，避免同源冲突
+            params.set('auto', isHost ? 'create' : 'join');
+            params.set('room', room);
+            if (isHost) { params.set('total', String(total)); }
+            params.set('seat', String(seat));
+            params.set('ready','1');
+            params.set('delayMs', String(delayMs));
+            return 'awlfj.html?' + params.toString();
+        }
+
+        function run(){
+            var room = document.getElementById('room').value.trim() || '8888';
+            var total = parseInt(document.getElementById('total').value, 10) || 5;
+            var count = parseInt(document.getElementById('clients').value, 10) || 5;
+            var grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            
+            for (var i=0; i<count; i++){
+                var src = buildUrl({index:i, room:room, total:total, count:count});
+                var cell = document.createElement('div');
+                cell.className = 'cell';
+                
+                // 添加标签
+                var label = document.createElement('div');
+                label.className = 'cell-label';
+                if (i === 0) {
+                    label.textContent = '👑 房主 (创建房间)';
+                    label.style.background = 'rgba(255, 193, 7, 0.9)';
+                } else {
+                    label.textContent = '玩家 ' + (i + 1) + ' (座位 ' + (i + 1) + ')';
+                }
+                cell.appendChild(label);
+                
+                var iframe = document.createElement('iframe');
+                iframe.src = src;
+                iframe.id = 'iframe-' + i;
+                
+                
+                cell.appendChild(iframe);
+                
+                // 添加测试按钮
+                var controls = document.createElement('div');
+                controls.className = 'cell-controls';
+                
+                // 快速断线重连测试按钮
+                var testBtn = document.createElement('button');
+                testBtn.className = 'test-btn';
+                testBtn.textContent = '🔌 快速断线重连';
+                testBtn.onclick = function(iframeId, iframeEl) {
+                    return function() {
+                        var targetIframe = iframeEl;
+                        if (!targetIframe) {
+                            targetIframe = document.getElementById(iframeId);
+                        }
+                        if (targetIframe && targetIframe.contentWindow) {
+                            try {
+                                targetIframe.contentWindow.postMessage({
+                                    type: 'TEST_DISCONNECT_RECONNECT'
+                                }, window.location.origin);
+                                console.log('✅ 已向 ' + iframeId + ' 发送快速断线重连测试指令');
+                                var originalText = testBtn.textContent;
+                                testBtn.textContent = '⏳ 测试中...';
+                                testBtn.disabled = true;
+                                setTimeout(function() {
+                                    testBtn.textContent = originalText;
+                                    testBtn.disabled = false;
+                                }, 3000);
+                            } catch (e) {
+                                console.error('❌ 发送消息失败:', e);
+                                alert('发送测试指令失败，请确保 iframe 已加载完成');
+                            }
+                        } else {
+                            console.warn('⚠️ iframe 未加载完成，请稍后再试');
+                            alert('iframe 未加载完成，请稍后再试');
+                        }
+                    };
+                }('iframe-' + i, iframe);
+                controls.appendChild(testBtn);
+                
+                cell.appendChild(controls);
+                
+                grid.appendChild(cell);
+            }
+        }
+
+        function clearFrames(){ 
+            document.getElementById('grid').innerHTML = ''; 
+        }
+
+        document.getElementById('btn-run').addEventListener('click', run);
+        document.getElementById('btn-clear').addEventListener('click', clearFrames);
+        document.getElementById('btn-ready-all').addEventListener('click', function() {
+            const frames = document.querySelectorAll('#grid iframe');
+            if (!frames.length) {
+                alert('请先创建客户端窗口');
+                return;
+            }
+            frames.forEach(frame => {
+                if (frame.contentWindow) {
+                    try {
+                        frame.contentWindow.postMessage({ type: 'TEST_READY_TOGGLE' }, window.location.origin);
+                    } catch (e) {
+                        console.warn('发送准备指令失败', e);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,199 @@
+/* --- 全局样式 (lrs.css 风格) --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- 卡片样式 (lrs.css 玻璃效果) --- */
+.card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+h1, h2 {
+    text-align: center;
+    color: #fff;
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 28px; /* lrs.css 尺寸 */
+    margin-bottom: 25px;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+/* --- 表单样式 (lrs.css 风格) --- */
+form p {
+    margin-bottom: 20px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #fff;
+    opacity: 0.9;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
+    color: #ffffff;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* --- 按钮样式 (lrs.css 风格) --- */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.btn:disabled {
+    background: #555;
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* --- 结果页样式 --- */
+#identity-card {
+    padding: 30px;
+    margin-bottom: 20px;
+    border: 2px solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 居中大图 */
+    justify-content: center;
+    overflow: hidden; /* 防止图片溢出 */
+}
+
+/* --- 角色大图样式 (330x450比例) --- */
+#identity-image {
+    width: 100%; /* 宽度自适应父容器 */
+    max-width: 330px; /* 最大宽度 */
+    height: auto; /* 高度自动，保持比例 */
+    aspect-ratio: 330 / 450; /* 强制宽高比 */
+    border-radius: 15px; /* 更方正的圆角 */
+    border: 3px solid rgba(255,255,255,0.7);
+    margin-bottom: 15px;
+    background-color: rgba(0,0,0,0.2);
+    object-fit: cover;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+#identity-card.good {
+    border-color: #84fab0; /* lrs.css 好人颜色 */
+}
+#identity-card.evil {
+    border-color: #f5576c; /* lrs.css 坏人颜色 */
+}
+
+/* --- 提示框 (lrs.css 风格) --- */
+.prompt-box {
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+#identity-name {
+    font-size: 2.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.good #identity-name { color: #84fab0; }
+.evil #identity-name { color: #f5576c; }
+
+#seen-players {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+}
+#seen-subtitle {
+    font-size: 1em;
+    font-weight: normal;
+    color: #eee;
+    opacity: 0.8;
+    margin-top: 8px;
+}
+
+/* --- 错误提示 (lrs.css 风格) --- */
+#error-message {
+    color: #f5576c;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+    display: none;
+    background: rgba(245, 87, 108, 0.2);
+    border: 1px solid #f5576c;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* --- “本局配置”相关的所有 CSS 已被删除 --- */

@@ -1,0 +1,442 @@
+html, body {
+    height: auto;
+    min-height: 100%;
+    align-items: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.player-card-only .room-chrome {
+    display: none !important;
+}
+/* 玩家看牌：按 iPhone 17 Pro 逻辑分辨率 402×874 居中 */
+html:has(#page-room.player-card-only),
+body:has(#page-room.player-card-only) {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+}
+body:has(#page-room.player-card-only) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+body:has(#page-room.player-card-only) .container {
+    width: min(402px, 100%);
+    height: min(874px, 100dvh);
+    max-height: 100dvh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+#page-room.player-card-only.page.active {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+#page-room.player-card-only .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+    overflow: auto;
+}
+.player-card-only .identity-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+}
+.player-card-only .identity-frame {
+    width: 100%;
+}
+.player-card-only .identity-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: min(68dvh, 640px);
+    object-fit: contain;
+}
+#my-card-role {
+    margin: 12px 0 0;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
+.player-card-only #my-card-role {
+    margin: 10px 0 0;
+    font-size: 24px;
+}
+.player-card-only #my-card-hint {
+    margin: 6px 2px 0;
+    text-align: center;
+    font-size: 17px;
+    line-height: 1.5;
+}
+.player-card-only #room-actions {
+    width: 100%;
+    margin-top: 16px;
+}
+.player-card-only #room-actions .btn {
+    min-height: 48px;
+    padding: 12px 8px;
+    font-size: 16px;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    border-radius: 12px;
+}
+.judge-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    margin-bottom: 8px;
+}
+.judge-row h2 {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin: 0;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: left;
+    white-space: nowrap;
+}
+.judge-row .bar-actions {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    gap: 4px;
+    margin: 0;
+}
+.judge-row .bar-actions .btn {
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    height: 34px;
+    min-height: 34px;
+    padding: 0 4px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 34px;
+    letter-spacing: 0;
+    text-transform: none;
+}
+.judge-seat {
+    width: auto;
+    min-width: 0;
+    height: 32px;
+    padding: 0 8px;
+    aspect-ratio: auto;
+    margin-bottom: 0;
+    border-radius: 8px;
+    font-size: 13px;
+}
+.judge-seat .seat-number {
+    color: #ffe08a;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+}
+.judge-seat.selected .seat-number {
+    color: #fff6d6;
+}
+.judge-seat.taken {
+    opacity: 1;
+}
+.judge-seat.switchable {
+    cursor: pointer;
+}
+.seat-role {
+    position: absolute;
+    bottom: 2px;
+    font-size: 14px;
+    line-height: 1;
+}
+.deal-list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin: 8px 0 12px;
+}
+.portrait {
+    position: relative;
+    margin: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+}
+.portrait img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    object-position: center top;
+}
+.portrait-seat {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.62);
+    font-size: 12px;
+}
+.portrait figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 18px 4px 6px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.82));
+}
+#deal-list .portrait {
+    cursor: pointer;
+    overflow: visible;
+    padding: 3px 3px 6px;
+    background: rgba(8, 16, 40, 0.45);
+    box-shadow: none;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+#deal-list .deal-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    height: 100%;
+}
+#deal-list .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    margin-top: 4px;
+    white-space: nowrap;
+}
+#deal-list .deal-card .card-meta .portrait-seat,
+#deal-list .deal-card .card-meta figcaption {
+    width: auto;
+    height: auto;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1.2;
+}
+#deal-list .icon-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    margin: 0;
+}
+#deal-list .portrait img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+    margin: 0;
+    border-radius: 10px;
+    object-fit: cover;
+}
+#deal-list .portrait-seat,
+#deal-list .portrait figcaption {
+    position: static;
+    display: block;
+    background: none;
+    padding: 4px 0 0;
+    text-align: center;
+    line-height: 1.25;
+}
+#deal-list .portrait-seat {
+    color: #ffe08a;
+    font-size: 13px;
+    font-weight: 700;
+}
+#deal-list .portrait figcaption {
+    color: #d5e4ff;
+    font-size: 12px;
+    font-weight: 700;
+}
+#deal-list .portrait.wolf {
+    border-color: rgba(255, 122, 138, 0.55);
+}
+#deal-list .portrait.wolf figcaption,
+#deal-list .portrait.wolf .dual-label {
+    color: #ff9aac;
+}
+#deal-list .portrait.good {
+    border-color: rgba(140, 232, 186, 0.4);
+}
+#deal-list .portrait.good figcaption,
+#deal-list .portrait.good .dual-label {
+    color: #b6f3d2;
+}
+#deal-list .portrait.dead img {
+    filter: grayscale(1) brightness(0.55);
+}
+#deal-list .portrait.dead .portrait-seat,
+#deal-list .portrait.dead figcaption,
+#deal-list .portrait.dead .dual-label {
+    color: #93a0be;
+}
+#deal-list .dead-stamp {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    padding: 0 4px;
+    border: 1px solid #ffb4bc;
+    border-radius: 4px;
+    color: #ffe4e7;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0;
+    background: rgba(90, 16, 28, 0.82);
+    pointer-events: none;
+}
+.portrait.wolf { box-shadow: 0 0 0 1px rgba(245, 87, 108, 0.7), 0 8px 18px rgba(0, 0, 0, 0.35); }
+.portrait.good { box-shadow: 0 0 0 1px rgba(132, 250, 176, 0.45), 0 8px 18px rgba(0, 0, 0, 0.35); }
+#deal-list .portrait.wolf,
+#deal-list .portrait.good { box-shadow: none; }
+.identity-board { text-align: center; margin-bottom: 10px; }
+.identity-frame {
+    position: relative;
+    width: min(260px, 72vw);
+    margin: 0 auto;
+}
+.identity-frame img {
+    display: block;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+}
+.identity-board.covered img { visibility: hidden; }
+.identity-cover {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(12, 18, 36, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    letter-spacing: 2px;
+}
+.identity-board.covered .identity-cover { display: flex; }
+#my-card-hint {
+    margin: 12px 0 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 15px;
+    line-height: 1.6;
+}
+#seat-grid .seat.pickable,
+#seat-grid .seat.selected {
+    cursor: pointer;
+    pointer-events: auto;
+}
+#seat-grid .seat.taken {
+    pointer-events: none;
+}
+.role-config-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    gap: 12px;
+}
+.role-config-row .stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.role-config-row .stepper button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 16px;
+}
+.role-config-row .role-switch {
+    position: relative;
+    width: 46px;
+    height: 26px;
+    padding: 0;
+    border: none;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.28);
+    flex: 0 0 auto;
+}
+.role-config-row .role-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.2s ease;
+}
+.role-config-row .role-switch.on {
+    background: #667eea;
+}
+.role-config-row .role-switch.on::after {
+    transform: translateX(20px);
+}
+.witch-pots {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+.potion-chip {
+    position: absolute;
+    top: 3px;
+    height: auto;
+    width: auto;
+    min-width: 32px;
+    min-height: 22px;
+    padding: 3px 4px;
+    border: 1px solid rgba(255, 224, 138, 0.8);
+    background: rgba(12, 16, 28, 0.78);
+    color: #ffe08a;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0;
+    pointer-events: auto;
+}
+.potion-chip.antidote { left: 3px; }
+.potion-chip.poison { right: 3px; }
+.potion-chip.used {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(12, 16, 28, 0.55);
+    color: #8b95ad;
+}
+.script-panel { text-align: left; }
+.script-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+#script-text {
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 0 8px;
+}

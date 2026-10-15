@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>双身份狼人杀</title>
+    <link rel="stylesheet" href="css/awlfj.css?v=20250117">
+    <link rel="stylesheet" href="css/lrs-deal.css?v=20261012r">
+    <link rel="stylesheet" href="css/dual-deal.css?v=20261012d">
+    <script>
+        (function () {
+            try {
+                var params = new URLSearchParams(window.location.search);
+                if (params.get('nostorage') === '1') {
+                    var mem = {};
+                    var shim = {
+                        getItem: function (k) { return Object.prototype.hasOwnProperty.call(mem, k) ? mem[k] : null; },
+                        setItem: function (k, v) { mem[k] = String(v); },
+                        removeItem: function (k) { delete mem[k]; },
+                        clear: function () { mem = {}; },
+                        key: function (i) { return Object.keys(mem)[i] || null; },
+                        get length() { return Object.keys(mem).length; }
+                    };
+                    Object.defineProperty(window, 'localStorage', { value: shim });
+                }
+            } catch (e) {}
+        })();
+    </script>
+</head>
+<body>
+<div class="container">
+    <div id="page-home" class="page active">
+        <div class="card">
+            <h1>双身份狼人杀</h1>
+            <div id="home-error" class="error-message"></div>
+            <p>
+                <label for="room-number">房间号:</label>
+                <input id="room-number" type="text" inputmode="numeric" maxlength="6" placeholder="输入 4-6 位数字房间号">
+            </p>
+            <div class="action-buttons">
+                <button id="btn-enter" class="btn btn-primary" type="button">进入房间</button>
+            </div>
+        </div>
+        <div class="card guide">
+            <div class="guide-head">
+                <strong id="guide-title">新手引导</strong>
+                <span id="guide-progress"></span>
+            </div>
+            <div id="guide-body"></div>
+            <div class="action-buttons">
+                <button id="guide-prev" class="btn btn-secondary" type="button">上一则</button>
+                <button id="guide-next" class="btn btn-primary" type="button">下一则</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-room" class="page">
+        <div class="card">
+            <div id="room-error" class="error-message"></div>
+            <div class="judge-row room-chrome">
+                <h2>房间号: <span id="room-info-number"></span></h2>
+                <button id="judge-seat" type="button" class="seat judge-seat">
+                    <span class="seat-number">法官</span>
+                </button>
+            </div>
+            <p class="prompt-box room-chrome" id="room-prompt"></p>
+            <div id="my-hand" class="dual-hand" style="display:none"></div>
+            <div id="seat-grid" class="seat-grid room-chrome"></div>
+            <div id="deal-list" class="deal-list room-chrome" style="display:none"></div>
+            <p class="prompt-box room-chrome" id="room-status-text"></p>
+            <div class="action-buttons" id="room-actions"></div>
+            <div id="role-config" class="player-config-info room-chrome" style="display:none"></div>
+        </div>
+    </div>
+</div>
+<script src="js/socket/sockjs.min.js"></script>
+<script src="js/socket/stomp.min.js"></script>
+<script src="js/dual-deal.js?v=20261012g"></script>
+</body>
+</html>
