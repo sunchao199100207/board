@@ -53,6 +53,11 @@ public class DualGameSocketController {
         guard(msg, () -> dualDealService.choose(msg));
     }
 
+    @MessageMapping("/dual/mark")
+    public void mark(@Payload DualClientMessage msg) {
+        guard(msg, () -> dualDealService.mark(msg));
+    }
+
     @MessageMapping("/dual/new-round")
     public void newRound(@Payload DualClientMessage msg) {
         guard(msg, () -> dualDealService.newRound(msg));

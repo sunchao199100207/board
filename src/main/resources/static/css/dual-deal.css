@@ -27,14 +27,38 @@
     color: #fff;
     text-align: center;
 }
+.dual-pick { position: relative; }
 .dual-pick.on { border-color: #ffd76a; }
+.dual-pick.dead img,
+.dual-pick.dead .fallback-face { filter: grayscale(1) brightness(0.55); }
+.hand-dead {
+    position: absolute;
+    left: 50%;
+    top: 38%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    padding: 2px 8px;
+    border: 1px solid #ffb4bc;
+    border-radius: 6px;
+    color: #ffe4e7;
+    font-size: 18px;
+    font-weight: 800;
+    background: rgba(90, 16, 28, 0.82);
+}
 .dual-pick img, .fallback-face {
     width: 100%;
+    height: auto;
+    max-height: 46dvh;
     aspect-ratio: 3 / 4;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center top;
     border-radius: 10px;
     display: block;
+    background: #12182c;
 }
+.hand-only .dual-stack .upper { width: min(320px, 88vw); }
+.hand-only .dual-stack .lower { width: min(220px, 62vw); }
+.hand-only .dual-stack .lower img { max-height: 30dvh; }
 .fallback-face {
     display: flex;
     align-items: center;
@@ -63,18 +87,52 @@
 .pair-row img, .pair-row .fallback-face {
     width: 100%;
     aspect-ratio: 3 / 4;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center top;
     border-radius: 8px;
+    background: #12182c;
 }
-.mini-face { font-size: 13px; }
-#deal-list.deal-list { grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); }
-#deal-list .pair-row { gap: 3px; }
-#deal-list .pair-row img,
-#deal-list .pair-row .fallback-face {
+#deal-list.deal-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+#deal-list .seat-pair { min-width: 0; }
+#deal-list .seat-no {
+    color: #ffe08a;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    margin-bottom: 2px;
+}
+#deal-list .seat-pair .pair-row { gap: 2px; }
+#deal-list .seat-pair .dual-role {
+    padding: 2px 1px 4px;
+}
+#deal-list .seat-pair .deal-card .card-meta {
+    gap: 2px;
+    margin-top: 2px;
+}
+#deal-list .seat-pair .deal-card .card-meta .portrait-seat,
+#deal-list .seat-pair .deal-card .card-meta figcaption {
+    font-size: 12px;
+    line-height: 1.2;
+}
+#deal-list .dual-role .icon-wrap {
+    aspect-ratio: 3 / 4;
+}
+#deal-list .dual-role .icon-wrap img {
     width: 100%;
-    height: 44px;
-    aspect-ratio: 1;
-    border-radius: 8px;
+    height: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: contain;
+    object-position: center top;
+    background: #12182c;
+}
+#deal-list .dual-role .potion-chip {
+    height: auto;
+    min-height: 0;
+    padding: 1px 2px;
+    font-size: 10px;
+    line-height: 1.3;
+    border-radius: 4px;
 }
 #deal-list .dual-label {
     color: #d5e4ff;

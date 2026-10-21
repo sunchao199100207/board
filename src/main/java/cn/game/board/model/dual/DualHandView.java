@@ -16,4 +16,6 @@ public class DualHandView {
     private String campName;
     private String campTip;
     private boolean golden;
+    private boolean cardADead;
+    private boolean cardBDead;
 }

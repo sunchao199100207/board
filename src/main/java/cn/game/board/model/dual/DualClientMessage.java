@@ -11,4 +11,6 @@ public class DualClientMessage {
     private Integer players;
     /** 0 表示第一张是上身份，1 表示第二张。 */
     private Integer upperIndex;
+    /** 法官标记死亡的那一张：A 或 B。 */
+    private String cardKey;
 }

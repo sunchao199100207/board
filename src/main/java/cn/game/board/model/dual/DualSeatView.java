@@ -17,4 +17,6 @@ public class DualSeatView {
     private Integer upperIndex;
     private boolean confirmed;
     private String campName;
+    private boolean cardADead;
+    private boolean cardBDead;
 }

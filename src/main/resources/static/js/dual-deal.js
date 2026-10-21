@@ -255,9 +255,14 @@
         paintDeal(next);
         paintActions(next);
         paintConfig(next);
-        var confirmed = next.dealt ? (' | 已确认上身份 ' + next.confirmedCount + ' / ' + next.total) : '';
-        document.getElementById('room-status-text').textContent =
-            '玩家: ' + next.seated + ' / ' + next.total + ' | 已准备: ' + next.readyCount + ' / ' + next.total + confirmed;
+        var status = document.getElementById('room-status-text');
+        if (next.dealt) {
+            status.textContent = '';
+            status.style.display = 'none';
+        } else {
+            status.style.display = '';
+            status.textContent = '玩家: ' + next.seated + ' / ' + next.total + ' | 已准备: ' + next.readyCount + ' / ' + next.total;
+        }
     }
 
     function paintJudge(next) {
@@ -276,8 +281,12 @@
             return;
         }
         prompt.style.display = 'block';
-        if (next.host && next.dealt) prompt.textContent = '牌已发出。点这位玩家的牌可以标记死亡，再点一次复活。夜里仍由你口述。';
-        else if (next.host) prompt.textContent = '先选人数。点空位可以下来换座。人齐并准备后发牌。';
+        if (next.host && next.dealt) {
+            prompt.style.display = 'none';
+            prompt.textContent = '';
+            return;
+        }
+        if (next.host) prompt.textContent = '先选人数。点空位可以下来换座。人齐并准备后发牌。';
         else if (next.mySeat) prompt.textContent = '点法官位可以换人。点其他空位可以换座。';
         else if (!next.judgeTaken) prompt.textContent = '最上方法官位，下面是号码。先坐下，再点准备。';
         else prompt.textContent = '请选择你的座位，然后点击准备';
@@ -312,12 +321,16 @@
             box.appendChild(actions);
             return;
         }
-        var upper = hand.upperIndex === 1 ? hand.cardB : hand.cardA;
-        var lower = hand.upperIndex === 1 ? hand.cardA : hand.cardB;
+        var upperIsB = hand.upperIndex === 1;
+        var upper = upperIsB ? hand.cardB : hand.cardA;
+        var lower = upperIsB ? hand.cardA : hand.cardB;
+        var upperDead = !!(upperIsB ? hand.cardBDead : hand.cardADead);
+        var lowerDead = !!(upperIsB ? hand.cardADead : hand.cardBDead);
+        var promote = upperDead && !lowerDead;
         var stack = document.createElement('div');
         stack.className = 'dual-stack';
-        stack.appendChild(showFace(upper, '上身份', 'upper'));
-        stack.appendChild(showFace(lower, '下身份', 'lower'));
+        stack.appendChild(showFace(promote ? lower : upper, promote ? '下身份' : '上身份', 'upper', promote ? lowerDead : upperDead));
+        stack.appendChild(showFace(promote ? upper : lower, promote ? '上身份' : '下身份', 'lower', promote ? upperDead : lowerDead));
         box.appendChild(stack);
         var camp = document.createElement('p');
         camp.className = 'dual-camp';
@@ -345,10 +358,16 @@
         return face;
     }
 
-    function showFace(card, label, size) {
+    function showFace(card, label, size, dead) {
         var face = document.createElement('div');
-        face.className = 'dual-pick ' + size;
+        face.className = 'dual-pick ' + size + (dead ? ' dead' : '');
         face.appendChild(faceMedia(card));
+        if (dead) {
+            var stamp = document.createElement('div');
+            stamp.className = 'hand-dead';
+            stamp.textContent = '死';
+            face.appendChild(stamp);
+        }
         var tag = document.createElement('div');
         tag.className = 'dual-label';
         tag.textContent = label;
@@ -423,37 +442,71 @@
         list.style.display = 'grid';
         list.innerHTML = '';
         (next.seats || []).forEach(function (info) {
-            var card = document.createElement('figure');
-            card.className = 'portrait ' + ((info.campName || '').indexOf('狼') >= 0 ? 'wolf' : 'good');
-            var dead = isDead(next, info.seat);
-            if (dead) {
-                card.classList.add('dead');
-            }
-            var upperKey = info.confirmed && info.upperIndex === 1 ? 'cardB' : 'cardA';
-            var lowerKey = upperKey === 'cardA' ? 'cardB' : 'cardA';
+            var seat = document.createElement('div');
+            seat.className = 'seat-pair';
+            var number = document.createElement('div');
+            number.className = 'seat-no';
+            number.textContent = info.seat + '号';
+            seat.appendChild(number);
             var row = document.createElement('div');
             row.className = 'pair-row';
-            row.appendChild(mini(info, upperKey, info.confirmed ? '上' : '甲'));
-            row.appendChild(mini(info, lowerKey, info.confirmed ? '下' : '乙'));
-            card.appendChild(row);
-            var caption = document.createElement('figcaption');
-            var upperName = info.confirmed ? (info.upperIndex === 1 ? info.cardBName : info.cardAName) : '未选上身份';
-            caption.textContent = info.seat + '号 ' + (dead ? '已死亡 · ' : '') + (info.campName || '') + ' · ' + upperName;
-            card.appendChild(caption);
-            if (dead) {
-                var stamp = document.createElement('div');
-                stamp.className = 'dead-stamp';
-                stamp.textContent = '死';
-                card.appendChild(stamp);
-            }
-            card.onclick = function () { toggleDead(next, info.seat); };
-            list.appendChild(card);
+            roleSlots(info).forEach(function (slot) {
+                row.appendChild(roleCard(next, info, slot));
+            });
+            seat.appendChild(row);
+            list.appendChild(seat);
         });
     }
 
-    function mini(info, which, tag) {
-        var name = which === 'cardA' ? info.cardAName : info.cardBName;
-        var emoji = which === 'cardA' ? info.cardAEmoji : info.cardBEmoji;
+    function roleSlots(info) {
+        var upperKey = info.confirmed && info.upperIndex === 1 ? 'cardB' : 'cardA';
+        var lowerKey = upperKey === 'cardA' ? 'cardB' : 'cardA';
+        return [
+            { which: upperKey, tag: info.confirmed ? '上' : '甲' },
+            { which: lowerKey, tag: info.confirmed ? '下' : '乙' }
+        ];
+    }
+
+    function roleCard(next, info, slot) {
+        var name = slot.which === 'cardA' ? info.cardAName : info.cardBName;
+        var card = document.createElement('figure');
+        card.className = 'portrait deal-card dual-role ' + (isWolfRole(name) ? 'wolf' : 'good');
+        var image = document.createElement('img');
+        image.src = imageSrc('img/lrs/' + roleImage(name));
+        image.alt = name || '';
+        var icon = document.createElement('div');
+        icon.className = 'icon-wrap';
+        icon.appendChild(image);
+        if (isRoleDead(next, info.seat, slot.which)) {
+            card.classList.add('dead');
+            var stamp = document.createElement('div');
+            stamp.className = 'dead-stamp';
+            stamp.textContent = '死';
+            icon.appendChild(stamp);
+        }
+        if (name === '女巫') {
+            icon.appendChild(witchPotions(next));
+        }
+        var badge = document.createElement('span');
+        badge.className = 'portrait-seat';
+        badge.textContent = slot.tag;
+        var caption = document.createElement('figcaption');
+        caption.textContent = name || '';
+        var meta = document.createElement('div');
+        meta.className = 'card-meta';
+        meta.appendChild(badge);
+        meta.appendChild(caption);
+        card.appendChild(icon);
+        card.appendChild(meta);
+        card.onclick = function () { toggleDead(next, info.seat, slot.which); };
+        return card;
+    }
+
+    function isWolfRole(name) {
+        return name === '狼人' || name === '狼王';
+    }
+
+    function roleImage(name) {
         var images = {
             '狼人': '狼人.jpg',
             '狼王': '黑狼王.jpg',
@@ -465,42 +518,34 @@
             '骑士': '骑士.jpg',
             '禁言长老': '禁言长老.jpg'
         };
-        var box = document.createElement('div');
-        if (images[name]) {
-            var image = document.createElement('img');
-            image.src = imageSrc('img/lrs/' + images[name]);
-            image.alt = name || '';
-            box.appendChild(image);
-        } else {
-            var face = document.createElement('div');
-            face.className = 'fallback-face mini-face';
-            face.textContent = (emoji || '') + (name || '');
-            box.appendChild(face);
-        }
-        var label = document.createElement('div');
-        label.className = 'dual-label';
-        label.textContent = tag + ' ' + (name || '');
-        box.appendChild(label);
-        return box;
+        return images[name] || ((name || '平民') + '.jpg');
     }
 
     function paintActions(next) {
         var actions = document.getElementById('room-actions');
+        var bar = document.getElementById('bar-actions');
         actions.innerHTML = '';
-        if (next.host && !next.dealt) {
-            actions.appendChild(button(next.canDeal ? '发牌' : '等待准备', 'btn-primary', next.canDeal, function () {
-                send('/app/dual/deal', { roomNumber: next.roomNumber });
+        if (bar) {
+            bar.innerHTML = '';
+            bar.style.display = 'none';
+        }
+        if (next.host && next.dealt && bar) {
+            actions.style.display = 'none';
+            bar.style.display = 'flex';
+            bar.appendChild(button('再发一局', 'btn-primary', true, function () {
+                if (window.confirm('再发一次？玩家需要重新准备，并重新选上身份。')) {
+                    send('/app/dual/new-round', { roomNumber: next.roomNumber });
+                }
             }));
-            actions.appendChild(button('解散房间', 'btn-danger', true, function () {
+            bar.appendChild(button('解散房间', 'btn-danger', true, function () {
                 if (window.confirm('解散后这副牌就作废了。')) send('/app/dual/close', { roomNumber: next.roomNumber });
             }));
             return;
         }
-        if (next.host && next.dealt) {
-            actions.appendChild(button('再发一局', 'btn-primary', true, function () {
-                if (window.confirm('再发一次？玩家需要重新准备，并重新选上身份。')) {
-                    send('/app/dual/new-round', { roomNumber: next.roomNumber });
-                }
+        actions.style.display = '';
+        if (next.host && !next.dealt) {
+            actions.appendChild(button(next.canDeal ? '发牌' : '等待准备', 'btn-primary', next.canDeal, function () {
+                send('/app/dual/deal', { roomNumber: next.roomNumber });
             }));
             actions.appendChild(button('解散房间', 'btn-danger', true, function () {
                 if (window.confirm('解散后这副牌就作废了。')) send('/app/dual/close', { roomNumber: next.roomNumber });
@@ -573,6 +618,7 @@
         var sigKey = 'dualDealSig:' + next.roomNumber + ':' + next.round;
         if (!next.dealt) {
             localStorage.removeItem(deadKey);
+            localStorage.removeItem(potionKey(next));
             localStorage.removeItem(sigKey);
             return;
         }
@@ -582,6 +628,7 @@
         var redeal = previous && (!previous.dealt || previous.round !== next.round || previous.roomNumber !== next.roomNumber);
         if (redeal || localStorage.getItem(sigKey) !== sig) {
             localStorage.removeItem(deadKey);
+            localStorage.removeItem(potionKey(next));
             localStorage.setItem(sigKey, sig);
         }
     }
@@ -598,19 +645,75 @@
         }
     }
 
-    function isDead(next, seat) {
-        return !!readDead(next)[seat];
+    function isRoleDead(next, seat, which) {
+        return !!readMarks(next)[seat + ':' + which];
     }
 
-    function toggleDead(next, seat) {
-        var marks = readDead(next);
-        if (marks[seat]) {
-            delete marks[seat];
+    function toggleDead(next, seat, which) {
+        var marks = readMarks(next);
+        var id = seat + ':' + which;
+        if (marks[id]) {
+            delete marks[id];
         } else {
-            marks[seat] = 1;
+            marks[id] = 1;
         }
         localStorage.setItem(deadStorageKey(next), JSON.stringify(marks));
+        send('/app/dual/mark', {
+            roomNumber: next.roomNumber,
+            seatNumber: seat,
+            cardKey: which === 'cardA' ? 'A' : 'B'
+        });
         paintDeal(state);
+    }
+
+    function readMarks(next) {
+        var saved = readDead(next);
+        if (saved && saved.seat && saved.which) {
+            var only = {};
+            only[saved.seat + ':' + saved.which] = 1;
+            return only;
+        }
+        return saved || {};
+    }
+
+    function potionKey(next) {
+        return 'dualPotion:' + next.roomNumber + ':' + next.round;
+    }
+
+    function readPotion(next) {
+        try {
+            var saved = JSON.parse(localStorage.getItem(potionKey(next)) || '{}');
+            return {
+                antidote: saved.antidote !== false,
+                poison: saved.poison !== false
+            };
+        } catch (e) {
+            return { antidote: true, poison: true };
+        }
+    }
+
+    function witchPotions(next) {
+        var stock = readPotion(next);
+        var box = document.createElement('div');
+        box.className = 'witch-pots';
+        box.appendChild(potionChip('解药', stock.antidote, 'antidote'));
+        box.appendChild(potionChip('毒药', stock.poison, 'poison'));
+        return box;
+    }
+
+    function potionChip(name, left, key) {
+        var node = document.createElement('button');
+        node.type = 'button';
+        node.className = 'potion-chip ' + key + (left ? ' left' : ' used');
+        node.textContent = name;
+        node.onclick = function (event) {
+            event.stopPropagation();
+            var latest = readPotion(state);
+            latest[key] = !latest[key];
+            localStorage.setItem(potionKey(state), JSON.stringify(latest));
+            paintDeal(state);
+        };
+        return node;
     }
 
     function imageSrc(url) {

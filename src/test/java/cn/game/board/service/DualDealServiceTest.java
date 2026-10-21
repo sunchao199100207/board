@@ -79,6 +79,44 @@ class DualDealServiceTest {
     }
 
     @Test
+    void judgeMarkShowsOnThePlayerHandAndBothDeadKeepsOrderData() {
+        sitJudge("host-0001");
+        for (int seat = 1; seat <= 6; seat++) {
+            String playerId = "player-" + String.format("%02d", seat);
+            service.enter(message(playerId));
+            DualClientMessage sit = message(playerId);
+            sit.setSeatNumber(seat);
+            service.selectSeat(sit);
+            DualClientMessage ready = message(playerId);
+            ready.setReady(true);
+            service.setReady(ready);
+        }
+        service.deal(message("host-0001"));
+        DualClientMessage choose = message("player-01");
+        choose.setUpperIndex(0);
+        service.choose(choose);
+
+        DualClientMessage markA = message("host-0001");
+        markA.setSeatNumber(1);
+        markA.setCardKey("A");
+        service.mark(markA);
+        DualRoomView marked = inbox.get(DualDealService.TOPIC_PREFIX + "player-01").getState();
+        assertTrue(marked.getHand().isCardADead());
+        assertFalse(marked.getHand().isCardBDead());
+
+        DualClientMessage markB = message("host-0001");
+        markB.setSeatNumber(1);
+        markB.setCardKey("B");
+        service.mark(markB);
+        DualRoomView both = inbox.get(DualDealService.TOPIC_PREFIX + "player-01").getState();
+        assertTrue(both.getHand().isCardADead());
+        assertTrue(both.getHand().isCardBDead());
+
+        service.mark(markA);
+        assertFalse(inbox.get(DualDealService.TOPIC_PREFIX + "player-01").getState().getHand().isCardADead());
+    }
+
+    @Test
     void enteringAnotherRoomLeavesThePreviousDualRoom() {
         service.enter(message("player-01", "1233"));
         service.enter(message("player-01", "1234"));

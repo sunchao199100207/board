@@ -204,6 +204,7 @@ public class DualDealService {
                 seated.get(i).setCardB(pairs.get(i)[1]);
                 seated.get(i).setUpperIndex(null);
             }
+            room.getDeadCards().clear();
             room.setDealt(true);
             log.info("双身份房间 {} 第 {} 局已发牌", room.getRoomNumber(), room.getRound());
         }
@@ -233,6 +234,29 @@ public class DualDealService {
         publish(room);
     }
 
+    public void mark(DualClientMessage msg) {
+        String playerId = requirePlayerId(msg);
+        DualRoom room = requireRoomOf(playerId);
+        synchronized (room) {
+            if (!playerId.equals(room.getHostPlayerId())) {
+                throw new IllegalStateException("只有法官可以标记");
+            }
+            if (!room.isDealt()) {
+                throw new IllegalStateException("还没发牌");
+            }
+            Integer seat = msg.getSeatNumber();
+            String card = msg.getCardKey();
+            if (seat == null || seat < 1 || (!"A".equals(card) && !"B".equals(card))) {
+                throw new IllegalArgumentException("请选择要标记的牌");
+            }
+            String key = seat + ":" + card;
+            if (!room.getDeadCards().add(key)) {
+                room.getDeadCards().remove(key);
+            }
+        }
+        publish(room);
+    }
+
     public void newRound(DualClientMessage msg) {
         String playerId = requirePlayerId(msg);
         DualRoom room = requireRoomOf(playerId);
@@ -242,6 +266,7 @@ public class DualDealService {
             }
             room.setDealt(false);
             room.setRound(room.getRound() + 1);
+            room.getDeadCards().clear();
             for (DualPlayer player : room.getPlayers().values()) {
                 player.setCardA(null);
                 player.setCardB(null);
@@ -411,7 +436,9 @@ public class DualDealService {
                         .cardBName(b.getName()).cardBEmoji(b.getEmoji())
                         .upperIndex(occupier.getUpperIndex())
                         .confirmed(occupier.getUpperIndex() != null)
-                        .campName(DualDeck.campName(occupier.getCardA(), occupier.getCardB()));
+                        .campName(DualDeck.campName(occupier.getCardA(), occupier.getCardB()))
+                        .cardADead(room.getDeadCards().contains(seat + ":A"))
+                        .cardBDead(room.getDeadCards().contains(seat + ":B"));
             }
             seats.add(seatView.build());
         }
@@ -426,6 +453,8 @@ public class DualDealService {
                     .campName(DualDeck.campName(self.getCardA(), self.getCardB()))
                     .campTip(DualDeck.campTip(self.getCardA(), self.getCardB()))
                     .golden(DualRole.VILLAGER.getKey().equals(self.getCardA()) && DualRole.VILLAGER.getKey().equals(self.getCardB()))
+                    .cardADead(room.getDeadCards().contains(self.getSeatNumber() + ":A"))
+                    .cardBDead(room.getDeadCards().contains(self.getSeatNumber() + ":B"))
                     .build();
         }
         return DualRoomView.builder()
